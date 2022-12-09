@@ -73,6 +73,9 @@ inputs:
     description: "Whether the GitHub actions have already been installed at `/actions-runner`."
     default: false
     required: true
+  network:
+    description: "The network to use for the instance."
+    required: false
 outputs:
   label:
     description: >-
@@ -102,4 +105,5 @@ runs:
         --preemptible=${{ inputs.preemptible }}
         --ephemeral=${{ inputs.ephemeral }}
         --actions_preinstalled=${{ inputs.actions_preinstalled }}
+        --network=${{ inputs.network }}
       shell: bash

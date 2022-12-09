@@ -33,6 +33,7 @@ shutdown_timeout=
 preemptible=
 ephemeral=
 actions_preinstalled=
+network=
 
 OPTLIND=1
 while getopts_long :h opt \
@@ -53,6 +54,7 @@ while getopts_long :h opt \
   preemptible required_argument \
   ephemeral required_argument \
   actions_preinstalled required_argument \
+  network optional_argument \
   help no_argument "" "$@"
 do
   case "$opt" in
@@ -107,6 +109,9 @@ do
     actions_preinstalled)
       actions_preinstalled=$OPTLARG
       ;;
+    network)
+      network=${OPTLARG-$network}
+      ;;
     h|help)
       usage
       exit 0
@@ -148,6 +153,7 @@ function start_vm {
   disk_size_flag=$([[ -z "${disk_size}" ]] || echo "--boot-disk-size=${disk_size}")
   preemptible_flag=$([[ "${preemptible}" == "true" ]] && echo "--preemptible" || echo "")
   ephemeral_flag=$([[ "${ephemeral}" == "true" ]] && echo "--ephemeral" || echo "")
+  network_flag=$([[ -z "${network}" ]] || echo "--network=${network}")
 
   echo "The new GCE VM will be ${VM_ID}"
 
@@ -187,6 +193,7 @@ function start_vm {
     ${image_flag} \
     ${image_family_flag} \
     ${preemptible_flag} \
+    ${network_flag} \
     --labels=gh_ready=0 \
     --metadata=startup-script="$startup_script" \
     && echo "label=${VM_ID}" >> $GITHUB_OUTPUT
